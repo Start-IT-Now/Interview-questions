@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import { Toaster } from '@/components/ui/toaster';
@@ -77,6 +77,43 @@ function App() {
         variant: 'destructive',
       });
     }
+  };
+
+   // Auto-populate jobDescription and requiredSkills from URL params on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+  
+    const decodeSafe = (str) => {
+      try {
+        return decodeURIComponent(str);
+      } catch {
+        return '';
+      }
+    };
+  
+    setFormData(prev => ({
+      ...prev,
+      requiredSkills: decodeSafe(params.get('skills') || ''),
+      minExperience: decodeSafe(params.get('experience') || ''),
+      maxExperience: decodeSafe(params.get('maxExperience') || ''),
+      jobTitle: decodeSafe(params.get('title') || ''),
+      industry: decodeSafe(params.get('industry') || ''),
+    }));
+  }, []);
+
+  // Helper to strip HTML tags from job description
+  const stripHtml = (html) => {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    // Add space after block elements to keep words separate
+    const blockTags = ['p', 'div', 'br', 'li'];
+    blockTags.forEach(tag => {
+      const elements = div.getElementsByTagName(tag);
+      for (let el of elements) {
+        el.appendChild(document.createTextNode(' '));
+      }
+    });
+    return div.textContent || div.innerText || '';
   };
 
   return (
