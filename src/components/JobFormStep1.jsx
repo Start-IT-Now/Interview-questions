@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, GraduationCap, Clock, Star, Users } from 'lucide-react';
+import { Briefcase, GraduationCap, Clock, Star, FileText,Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-const MAX_EXPERIENCE = 50; // Maximum years of experience allowed
-const MIN_EXPERIENCE = 0;  // Minimum years of experience allowed
-const EXPERIENCE_STEP = 1; // Step for increment/decrement
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 // Floating icon component
 const FloatingIcon = ({ children, className }) => (
@@ -23,16 +21,67 @@ const FloatingIcon = ({ children, className }) => (
 
   const JobFormStep1 = ({ formData, handleInputChange, onNewSubmit, jobDescription }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [jobDescriptionIsValid, setJobDescriptionIsValid] = useState(false);
   const [errors, setErrors] = useState({});
+
+  function JobDescriptionEditor({ value, onChange, minWords = 100, maxWords = 200, onValidChange, readOnly }) {
+  const [error, setError] = useState('');
+
+  const countWords = (html) => {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    const text = div.textContent || div.innerText || '';
+    return text.trim().split(/\s+/).filter(Boolean).length;
+  };
+
+  useEffect(() => {
+    const wordCount = countWords(value);
+    if (wordCount < minWords) {
+      setError(`Minimum ${minWords} words (currently ${wordCount})`);
+      onValidChange && onValidChange(false);
+    } else if (wordCount > maxWords) {
+      setError(`Maximum ${maxWords} words (currently ${wordCount})`);
+      onValidChange && onValidChange(false);
+    } else {
+      setError('');
+      onValidChange && onValidChange(true);
+    }
+  }, [value, minWords, maxWords, onValidChange]);
+
+  return (
+    <div className="relative">
+      <ReactQuill
+        theme="snow"
+        value={value}
+        onChange={onChange}
+        modules={{
+          toolbar: [
+            ['bold', 'italic', 'underline'],
+            [{ header: [1, 2, 3, false] }],
+            ['clean'],
+          ],
+        }}
+        formats={['bold', 'italic', 'underline', 'header']}
+        placeholder="Describe the role, responsibilities, requirements..."
+        className="bg-white/70 border border-gray-300 rounded-md min-h-[200px]"
+        readOnly={readOnly}
+      />
+      {error && <p className="text-red-600 mt-1 text-sm">{error}</p>}
+    </div>
+  );
+}
 
   // Validation
   const validate = () => {
     const newErrors = {};
     if (!formData.jobTitle) newErrors.jobTitle = 'Job Title is required';
     if (!formData.requiredSkills) newErrors.requiredSkills = 'Please enter one or more skills';
-    if (!formData.minExperience) newErrors.minExperience = 'Min Experience is required';
-    if (!formData.maxExperience) newErrors.maxExperience = 'Max Experience is required';
     if (!formData.industry) newErrors.industry = 'Industry is required';
+   if (!formData.jobTitle) newErrors.jobTitle = 'Job Title is required';
+if (!jobDescriptionIsValid) {
+  newErrors.jobDescription = 'Job description must be between 100 and 200 words';
+}
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -145,55 +194,29 @@ const FloatingIcon = ({ children, className }) => (
                     </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 mb-4">
-                 {/* Min Experience */}
+                     <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="space-y-2">
-                      <Label className="flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        Min Experience <span className="text-red-500">*</span>
-                      </Label>
-                      <Input
-      type="number"
-      name="minExperience"
-      value={formData.minExperience || ""}
-      onChange={(e) => {
-        let value = e.target.value.replace(/\D/g, ""); // digits only
-        value = Math.max(MIN_EXPERIENCE, Math.min(MAX_EXPERIENCE, value)); // clamp 0–50
-        handleInputChange("minExperience", value);
-      }}
-      className="bg-white/70"
-      placeholder="e.g. 3"
-      min={MIN_EXPERIENCE}
-      max={MAX_EXPERIENCE}
-      step={EXPERIENCE_STEP}
-    />
-  </div>
-
-                    {/* Max Experience */}
-                    <div className="space-y-2">
-                      <Label className="flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        Max Experience <span className="text-red-500">*</span>
-                      </Label>
-    <Input
-      type="number"
-      name="maxExperience"
-      value={formData.maxExperience || ""}
-      onChange={(e) => {
-        let value = e.target.value.replace(/\D/g, "");
-        value = Math.max(MIN_EXPERIENCE, Math.min(MAX_EXPERIENCE, value));
-        handleInputChange("maxExperience", value);
-      }}
-      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-      placeholder="e.g. 6"
-      min={MIN_EXPERIENCE}
-      max={MAX_EXPERIENCE}
-      step={EXPERIENCE_STEP}
-    />
-  </div>
-</div>
-
-                    
+                    <Label className="flex items-center gap-2 text-slate-800 font-semibold ">
+                      <Clock className="w-4 h-4" />
+                      Years of Experience
+                    </Label>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="e.g. 3"
+                      value={formData.yearsOfExperience}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (/^\d*$/.test(value)) {
+                          handleInputChange('yearsOfExperience', value);
+                        }
+                      }}
+                      onWheel={(e) => e.target.blur()}
+                      className="bg-white/70"
+                      disabled={isLoading}
+                    />
+                  </div>
+                     
                     {/* Industry */}
                       <div className="space-y-2">
                       <Label className="flex items-center gap-2">
@@ -211,6 +234,25 @@ const FloatingIcon = ({ children, className }) => (
                         <p className="text-red-600 text-sm">{errors.industry}</p>
                       )}
                     </div>
+                    </div>
+
+{/* Job Description */}
+<div className="space-y-2">
+  <Label className="flex items-center gap-2 text-slate-800 font-semibold mt-4 mb-2">
+    <FileText className="w-4 h-4" />
+    Job Description <span className="text-red-500">*</span>
+  </Label>
+<JobDescriptionEditor
+  value={formData.jobDescription}
+  onChange={(value) => handleInputChange('jobDescription', value)}
+  onValidChange={setJobDescriptionIsValid}
+  readOnly={isLoading}
+/>
+
+  {errors.jobDescription && (
+    <p className="text-red-600 text-sm">{errors.jobDescription}</p>
+  )}
+</div>
 
 
                   {/* Submit Button */}

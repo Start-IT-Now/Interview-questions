@@ -11,10 +11,10 @@ import pic from './pic.png';
 function App() {
   const [formData, setFormData] = useState({
     jobTitle: '',
-    minExperience: '',
-    maxExperience: '',
+    Experience: '',
     requiredSkills: '',
     industry: '',
+    jobDescription: '',
   });
 
   const [jobDescription, setJobDescription] = useState(null);
@@ -34,7 +34,7 @@ function App() {
         org_id: 1,
         exe_name: 'run1',
         workflow_id: 'interview_questions',
-        job_description: `Looking for ${data.jobTitle} with the ${data.requiredSkills} skill of min experience of ${data.minExperience} years and max experience ${data.maxExperience} years in ${data.industry} domain.`,
+        job_description: `Looking for ${data.jobTitle} with the ${data.requiredSkills} skill of min experience of  years and max experience ${data.maxExperience} years in ${data.industry} domain. ${stripHtml(data.jobDescription)}`,
       };
 
       console.log('📤 Final Payload:', jobPayload);
@@ -94,8 +94,8 @@ function App() {
     setFormData(prev => ({
       ...prev,
       requiredSkills: decodeSafe(params.get('skills') || ''),
-      minExperience: decodeSafe(params.get('experience') || ''),
-      maxExperience: decodeSafe(params.get('maxExperience') || ''),
+      Experience: decodeSafe(params.get('experience') || ''),
+      jobDescription: decodeSafe(params.get('job') || ''),
       jobTitle: decodeSafe(params.get('title') || ''),
       industry: decodeSafe(params.get('industry') || ''),
     }));
