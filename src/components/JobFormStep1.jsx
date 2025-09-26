@@ -234,7 +234,7 @@ const FloatingIcon = ({ children, className }) => (
                 className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 max-w-xl w-full text-gray-900 overflow-y-auto max-h-[80vh]"
               >
                 <h2 className="text-2xl font-bold mb-4 text-blue-800">
-                  Generated Questions
+                  Questions & Answers
                 </h2>
 {Array.isArray(jobDescription) ? (
   <div className="space-y-4">
