@@ -4,15 +4,10 @@ import { Briefcase, GraduationCap, Clock, Star, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
-
+const MAX_EXPERIENCE = 50; // Maximum years of experience allowed
+const MIN_EXPERIENCE = 0;  // Minimum years of experience allowed
+const EXPERIENCE_STEP = 1; // Step for increment/decrement
 
 // Floating icon component
 const FloatingIcon = ({ children, className }) => (
@@ -34,8 +29,9 @@ const FloatingIcon = ({ children, className }) => (
   const validate = () => {
     const newErrors = {};
     if (!formData.jobTitle) newErrors.jobTitle = 'Job Title is required';
-    if (!formData.jobType) newErrors.jobType = 'Job Type is required';
     if (!formData.requiredSkills) newErrors.requiredSkills = 'Please enter one or more skills';
+    if (!formData.minExperience) newErrors.minExperience = 'Min Experience is required';
+    if (!formData.maxExperience) newErrors.maxExperience = 'Max Experience is required';
     if (!formData.industry) newErrors.industry = 'Industry is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -95,8 +91,8 @@ const FloatingIcon = ({ children, className }) => (
               >
                 <div className="mb-2 text-left">
                   <h1 className="text-4xl lg:text-5xl font-extrabold leading-tight text-orange-400 drop-shadow-md">
-                    AI Generated <br />
-                    <span className="text-black">Job Description</span>
+                    AI Generated <br/>
+                    <span className="text-black">Interview Questions</span>
                   </h1>
                   <p className="mt-4 text-lg text-gray-500 max-w-xl">
                     Built with AI. Designed for Recruiters.
@@ -111,8 +107,9 @@ const FloatingIcon = ({ children, className }) => (
                   transition={{ duration: 0.6 }}
                   className="bg-sky-50/70 backdrop-blur-lg rounded-3xl shadow-2xl p-8 w-full"
                 >
-                  {/* Job Title & Experience */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  {/* Job Type & Skills */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5 mb-4">
                     <div className="space-y-2">
                       <Label className="flex items-center gap-2">
                         <Briefcase className="w-4 h-4" />
@@ -127,57 +124,6 @@ const FloatingIcon = ({ children, className }) => (
                       />
                       {errors.jobTitle && (
                         <p className="text-red-600 text-sm">{errors.jobTitle}</p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        Years of Experience
-                      </Label>
-                      <Input
-                        type="text"
-                        inputMode="numeric"
-                        placeholder="e.g. 3"
-                        value={formData.yearsOfExperience}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (/^\d*$/.test(value)) {
-                            handleInputChange('yearsOfExperience', value);
-                          }
-                        }}
-                        onWheel={(e) => e.target.blur()}
-                        className="bg-white/70"
-                        disabled={isLoading}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Job Type & Skills */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5 mb-4">
-                    <div className="space-y-2">
-                      <Label className="flex items-center gap-2">
-                        <Users className="w-4 h-4" />
-                        Job Type <span className="text-red-500">*</span>
-                      </Label>
-                      <Select
-                        value={formData.jobType}
-                        onValueChange={(value) => handleInputChange('jobType', value)}
-                        disabled={isLoading}
-                      >
-                        <SelectTrigger className="bg-white/70">
-                          <SelectValue placeholder="Select job type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="full-time">Full Time</SelectItem>
-                          <SelectItem value="part-time">Part Time</SelectItem>
-                          <SelectItem value="contract">Contract</SelectItem>
-                          <SelectItem value="freelance">Freelance</SelectItem>
-                          <SelectItem value="internship">Internship</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {errors.jobType && (
-                        <p className="text-red-600 text-sm">{errors.jobType}</p>
                       )}
                     </div>
 
@@ -198,6 +144,55 @@ const FloatingIcon = ({ children, className }) => (
                       )}
                     </div>
                     </div>
+
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                 {/* Min Experience */}
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <Clock className="w-4 h-4" />
+                        Min Experience <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+      type="number"
+      name="minExperience"
+      value={formData.minExperience || ""}
+      onChange={(e) => {
+        let value = e.target.value.replace(/\D/g, ""); // digits only
+        value = Math.max(MIN_EXPERIENCE, Math.min(MAX_EXPERIENCE, value)); // clamp 0–50
+        handleInputChange("minExperience", value);
+      }}
+      className="bg-white/70"
+      placeholder="e.g. 3"
+      min={MIN_EXPERIENCE}
+      max={MAX_EXPERIENCE}
+      step={EXPERIENCE_STEP}
+    />
+  </div>
+
+                    {/* Max Experience */}
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <Clock className="w-4 h-4" />
+                        Max Experience <span className="text-red-500">*</span>
+                      </Label>
+    <Input
+      type="number"
+      name="maxExperience"
+      value={formData.maxExperience || ""}
+      onChange={(e) => {
+        let value = e.target.value.replace(/\D/g, "");
+        value = Math.max(MIN_EXPERIENCE, Math.min(MAX_EXPERIENCE, value));
+        handleInputChange("maxExperience", value);
+      }}
+      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+      placeholder="e.g. 6"
+      min={MIN_EXPERIENCE}
+      max={MAX_EXPERIENCE}
+      step={EXPERIENCE_STEP}
+    />
+  </div>
+</div>
+
                     
                     {/* Industry */}
                       <div className="space-y-2">
@@ -239,11 +234,27 @@ const FloatingIcon = ({ children, className }) => (
                 className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 max-w-xl w-full text-gray-900 overflow-y-auto max-h-[80vh]"
               >
                 <h2 className="text-2xl font-bold mb-4 text-blue-800">
-                  Generated Job Description
+                  Generated Questions
                 </h2>
-                <pre className="whitespace-pre-wrap text-sm font-medium font-serif leading-relaxed text-gray-900">
-                  {jobDescription}
-                </pre>
+{Array.isArray(jobDescription) ? (
+  <div className="space-y-4">
+    {jobDescription.map((qa, idx) => (
+      <div key={idx} className="border-b pb-2">
+        <p className="font-semibold text-gray-800">
+          Q{idx + 1}: {qa.question}
+        </p>
+        <p className="text-gray-600 mt-1">
+          {qa.answer}
+        </p>
+      </div>
+    ))}
+  </div>
+) : (
+  <pre className="whitespace-pre-wrap text-sm font-medium font-serif leading-relaxed text-gray-900">
+    {jobDescription}
+  </pre>
+)}
+
               </motion.div>
             )}
           </div>

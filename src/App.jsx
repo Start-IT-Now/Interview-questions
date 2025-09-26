@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import { Toaster } from '@/components/ui/toaster';
@@ -11,13 +11,14 @@ import pic from './pic.png';
 function App() {
   const [formData, setFormData] = useState({
     jobTitle: '',
-    yearsOfExperience: '',
-    jobType: '',
+    minExperience: '',
+    maxExperience: '',
     requiredSkills: '',
     industry: '',
   });
 
-  const [jobDescription, setJobDescription] = useState('');
+  const [jobDescription, setJobDescription] = useState(null);
+
   const { toast } = useToast();
 
   const handleInputChange = (field, value) => {
@@ -28,21 +29,12 @@ function App() {
   };
 
   const handleNewSubmit = async (data) => {
-    if (!data.jobTitle || !data.jobType) {
-      toast({
-        title: 'Missing Information',
-        description: 'Please fill in all required fields before submitting.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     try {
       const jobPayload = {
         org_id: 1,
         exe_name: 'run1',
-        workflow_id: 'jd_maker',
-        instraction: `Looking for ${data.requiredSkills}skill with ${data.yearsOfExperience} years of experience for a ${data.jobType} role in ${data.industry} domain.`,
+        workflow_id: 'interview_questions',
+        job_description: `Looking for ${data.jobTitle} with the ${data.requiredSkills} skill of min experience of ${data.minExperience} years and max experience ${data.maxExperience} years in ${data.industry} domain.`,
       };
 
       console.log('📤 Final Payload:', jobPayload);
@@ -59,14 +51,17 @@ function App() {
       );
 
       const result = await response.json();
+      console.log('📥 Full API Response:', result);
 
       if (!response.ok) {
         throw new Error(result?.message || `Upload failed with status ${response.status}`);
       }
 
       const jobDesc = result?.data?.result?.[0];
+      console.log('📥 Extracted jobDesc:', jobDesc);
 
-      setJobDescription(jobDesc); // ⬅️ Display on same page
+      // ✅ Save into state so it appears in JobFormStep1
+      setJobDescription(jobDesc);
 
       toast({
         title: 'Success!',
@@ -84,65 +79,17 @@ function App() {
     }
   };
 
-  // Auto-populate jobDescription and requiredSkills from URL params on mount
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-  
-    const decodeSafe = (str) => {
-      try {
-        return decodeURIComponent(str);
-      } catch {
-        return '';
-      }
-    };
-  
-    const jobTypeLabel = decodeSafe(params.get('jobtype') || '').trim();
-  
-    // Map labels from URL param to select values exactly
-    const jobTypeMap = {
-      'Full time': 'fulltime',
-      'Part time': 'parttime',
-      'Contract': 'contract',
-      'Freelance': 'freelance',
-      'Internship': 'internship',
-    };
-  
-    const mappedJobType = jobTypeMap[jobTypeLabel] || '';
-  
-    setFormData(prev => ({
-      ...prev,
-      requiredSkills: decodeSafe(params.get('skills') || ''),
-      yearsOfExperience: decodeSafe(params.get('yoe') || ''),
-      jobTitle: decodeSafe(params.get('jobtitle') || ''),
-      jobType: mappedJobType,  // THIS MUST BE a valid option value or empty string
-    }));
-  }, []);
-
-  // Helper to strip HTML tags from job description
-  const stripHtml = (html) => {
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    // Add space after block elements to keep words separate
-    const blockTags = ['p', 'div', 'br', 'li'];
-    blockTags.forEach(tag => {
-      const elements = div.getElementsByTagName(tag);
-      for (let el of elements) {
-        el.appendChild(document.createTextNode(' '));
-      }
-    });
-    return div.textContent || div.innerText || '';
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-100 via-orange-200 to-orange-300 relative overflow-hidden">
       <Helmet>
-        <title>Talent Sift - Job Description Platform</title>
+        <title>Talent Sift - Interview Questions</title>
         <meta
-          name="description"
+          name="Questions"
           content="Create and post job opportunities with Talent Sift's intuitive job posting platform"
         />
       </Helmet>
 
+      {/* Background Animation */}
       <motion.div
         className="absolute inset-0 opacity-10"
         initial={{ opacity: 0 }}
@@ -155,9 +102,10 @@ function App() {
       </motion.div>
 
       <div
-        className="relative min-h-screen bg-cover bg-center bg-no-repeat"
+        className="relative min-h-screen bg-cover bg-center bg-no-repeat overflow-hidden"
         style={{ backgroundImage: `url(${pic})` }}
       >
+        {/* Header */}
         <div className="p-8 flex items-center justify-start space-x-4">
           <img src={logo} alt="Talent Sift Logo" className="h-10" />
           <div className="absolute top-0 right-0 p-4 flex items-center justify-end space-x-2">
@@ -169,12 +117,13 @@ function App() {
           </div>
         </div>
 
+        {/* Main Form */}
         <div className="flex-1 flex justify-start p-4">
           <JobFormStep1
             formData={formData}
             handleInputChange={handleInputChange}
             onNewSubmit={handleNewSubmit}
-            jobDescription={jobDescription} // ✅ passed as prop
+            jobDescription={jobDescription} 
           />
         </div>
 
