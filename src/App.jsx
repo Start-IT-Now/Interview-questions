@@ -94,7 +94,7 @@ function App() {
     setFormData(prev => ({
       ...prev,
       requiredSkills: decodeSafe(params.get('skills') || ''),
-      experience: decodeSafe(params.get('experience') || ''),
+      experience: decodeSafe(params.get('yoe') || ''),
       jobDescription: decodeSafe(params.get('job') || ''),
       jobTitle: decodeSafe(params.get('title') || ''),
       industry: decodeSafe(params.get('industry') || ''),
