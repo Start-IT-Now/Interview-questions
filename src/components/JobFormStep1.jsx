@@ -168,15 +168,15 @@ const JobFormStep1 = ({ formData, handleInputChange, onNewSubmit, jobDescription
               <div className="grid grid-cols-2 gap-4 mt-4">
                 <div>
                   <Label className="flex items-center gap-2 mb-3 text-slate-800 font-semibold">
-                    <Clock className="w-4 h-4" /> Years of Experience
+                    <Clock className="w-4 h-4" /> Experience
                   </Label>
                   <Input
                     type="text"
                     placeholder="e.g. 3"
-                    value={formData.yearsOfExperience}
+                    value={formData.Experience}
                     onChange={(e) => {
                       const val = e.target.value;
-                      if (/^\d*$/.test(val)) handleInputChange("yearsOfExperience", val);
+                      if (/^\d*$/.test(val)) handleInputChange("Experience", );
                     }}
                     disabled={isLoading}
                   />
