@@ -11,7 +11,7 @@ import pic from './pic.png';
 function App() {
   const [formData, setFormData] = useState({
     jobTitle: '',
-    Experience: '',
+    experience: '',
     requiredSkills: '',
     industry: '',
     jobDescription: '',
