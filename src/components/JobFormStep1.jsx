@@ -199,7 +199,7 @@ const JobFormStep1 = ({ formData, handleInputChange, onNewSubmit, jobDescription
               {/* Job Description */}
               <div className="mt-4">
                 <Label className="flex items-center gap-2 text-slate-800 font-semibold mb-3">
-                  <FileText className="w-4 h-4" /> Job Description <span className="text-red-500">*</span>
+                  <FileText className="w-4 h-4" /> Context <span className="text-red-500">*</span>
                 </Label>
                 <JobDescriptionEditor
                   value={formData.jobDescription}
