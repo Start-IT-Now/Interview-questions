@@ -119,7 +119,14 @@ const JobFormStep1 = ({ formData, handleInputChange, onNewSubmit, jobDescription
           </div>
 
           {/* LEFT SIDE */}
-          <div className="flex flex-col space-y-6 w-full lg:w-[48%] max-w-[600px] bg-sky-50/70 rounded-2xl shadow-lg p-6">
+<div className="flex flex-col space-y-8 
+                w-full 
+                max-w-[640px] 
+                bg-sky-50/70 
+                rounded-2xl 
+                shadow-lg 
+                p-8">
+
 
               <h1 className="text-4xl font-extrabold text-orange-400 leading-tight">
                 AI Generated <br />
