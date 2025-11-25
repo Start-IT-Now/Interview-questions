@@ -65,7 +65,7 @@ function App() {
 
       toast({
         title: 'Success!',
-        description: 'Job description created successfully.',
+        description: 'Questions created successfully.',
       });
 
       return jobDesc;
@@ -143,7 +143,7 @@ function App() {
         style={{ backgroundImage: `url(${pic})` }}
       >
         {/* Header */}
-        <div className="p-8 flex items-center justify-start space-x-4">
+        <div className="p-4 flex items-center justify-start space-x-2">
           <img src={logo} alt="Talent Sift Logo" className="h-10" />
           <div className="absolute top-0 right-0 p-4 flex items-center justify-end space-x-2">
             <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
@@ -155,7 +155,7 @@ function App() {
         </div>
 
         {/* Main Form */}
-        <div className="flex-1 flex justify-start p-4">
+        <div className="flex-1 flex justify-start p-2">
           <JobFormStep1
             formData={formData}
             handleInputChange={handleInputChange}

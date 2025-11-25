@@ -98,15 +98,15 @@ const JobFormStep1 = ({ formData, handleInputChange, onNewSubmit, jobDescription
   };
 
   return (
-    <div className="relative z-10 flex flex-col min-h-screen">
-      <main className="flex-grow flex flex-col items-start justify-start px-4 py-10">
+    <div className="relative z-4 flex flex-col min-h-screen">
+      <main className="flex-grow flex flex-col items-start justify-start px-2 py-2">
         {isLoading && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-md">
             <div className="text-lg font-semibold text-blue-600 animate-pulse">Processing...</div>
           </div>
         )}
 
-          <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-24 relative px-8 lg:px-12 py-12 items-stretch">
+          <div className="w-full max-w-[95%] flex flex-col lg:flex-row gap-12 relative px-2 lg:px-2 py-2 items-start justify-between">
 
           {/* Floating Icons */}
           <div className="hidden lg:block">
@@ -119,14 +119,13 @@ const JobFormStep1 = ({ formData, handleInputChange, onNewSubmit, jobDescription
           </div>
 
           {/* LEFT SIDE */}
-          <div className="flex flex-col space-y-6 max-w-2xl w-full bg-sky-50/70 rounded-2xl shadow-lg p-6 flex-grow overflow-y-auto max-h-[75vh]">
-            <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }}>
+          <div className="flex flex-col space-y-6 w-full lg:w-[48%] max-w-[600px] bg-sky-50/70 rounded-2xl shadow-lg p-6">
+
               <h1 className="text-4xl font-extrabold text-orange-400 leading-tight">
                 AI Generated <br />
                 <span className="text-black">Interview Questions</span>
               </h1>
               <p className="mt-2 text-gray-600">Built with AI. Designed for Recruiters.</p>
-            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -173,10 +172,10 @@ const JobFormStep1 = ({ formData, handleInputChange, onNewSubmit, jobDescription
                   <Input
                     type="text"
                     placeholder="e.g. 3"
-                    value={formData.Experience}
+                    value={formData.experience}
                     onChange={(e) => {
                       const val = e.target.value;
-                      if (/^\d*$/.test(val)) handleInputChange("Experience", );
+                      if (/^\d*$/.test(val)) handleInputChange("experience", );
                     }}
                     disabled={isLoading}
                   />
@@ -227,7 +226,7 @@ const JobFormStep1 = ({ formData, handleInputChange, onNewSubmit, jobDescription
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-white/80 rounded-2xl shadow-xl p-6 max-w-lg w-full text-gray-900 overflow-y-auto max-h-[75vh] flex-grow"
+              className="bg-gray-200 rounded-2xl shadow-xl p-8 w-[40%] text-gray-900 overflow-y-auto flex-grow"
 
             >
               <h2 className="text-2xl font-bold mb-3 text-blue-800">Qualification Questions</h2>
